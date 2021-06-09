@@ -10,13 +10,13 @@ public class MailRuTest extends MailRuBaseTest{
     private static final String ADDRESSEE = "mapat_91@mail.ru";
     private static final String MAIL_THEME = "This e-mail is sent to you by Selenium Auto-Test";
     private static final String MAIL_BODY = "Hello, World!";
-    private String assertionErrorMessage = "Failed test name: ";
+    private static final String FAILED_TEST_NAME = "Failed test name: ";
 
     @Test
     public void testLoginToMailbox() {
         Assert.assertTrue(mailRuMailboxPage
                         .isUserLoggedInMailbox(),
-                assertionErrorMessage + new MailRuTest() {}.getClass().getEnclosingMethod().getName() +
+                FAILED_TEST_NAME + new MailRuTest() {}.getClass().getEnclosingMethod().getName() +
                         ". True - \"write mail\" element is displayed, false is otherwise");
     }
 
@@ -26,7 +26,7 @@ public class MailRuTest extends MailRuBaseTest{
                         .writeNewMail(ADDRESSEE, MAIL_THEME, MAIL_BODY)
                         .openMailboxDraftsFolder()
                         .isMailPresentInMailboxFolder(MailboxFolderEnum.DRAFT),
-                assertionErrorMessage + new MailRuTest() {}.getClass().getEnclosingMethod().getName() +
+                FAILED_TEST_NAME + new MailRuTest() {}.getClass().getEnclosingMethod().getName() +
                         ". True - draft mail is present in folder, false is otherwise");
     }
 
@@ -34,7 +34,7 @@ public class MailRuTest extends MailRuBaseTest{
     public void testDraftMail() {
         Assert.assertTrue(mailRuMailboxPage
                         .isMailVerifiedInMailboxFolder(MailboxFolderEnum.DRAFT, ADDRESSEE, MAIL_THEME, MAIL_BODY),
-                assertionErrorMessage + new MailRuTest() {}.getClass().getEnclosingMethod().getName() +
+                FAILED_TEST_NAME + new MailRuTest() {}.getClass().getEnclosingMethod().getName() +
                         ". True - draft mail is verified in folder, false is otherwise");
     }
 
@@ -42,7 +42,7 @@ public class MailRuTest extends MailRuBaseTest{
     public void testSentMailAbsenceInDraftFolder() {
         Assert.assertFalse(mailRuMailboxPage.sendMail()
                         .isMailPresentInMailboxFolder(MailboxFolderEnum.DRAFT),
-                assertionErrorMessage + new MailRuTest() {}.getClass().getEnclosingMethod().getName() +
+                FAILED_TEST_NAME + new MailRuTest() {}.getClass().getEnclosingMethod().getName() +
                         ". False - sent mail is absent in Draft folder, true is otherwise");
     }
 
@@ -51,7 +51,7 @@ public class MailRuTest extends MailRuBaseTest{
         Assert.assertTrue(mailRuMailboxPage
                         .openMailboxSentFolder()
                         .isMailVerifiedInMailboxFolder(MailboxFolderEnum.SENT, ADDRESSEE, MAIL_THEME, MAIL_BODY),
-                assertionErrorMessage + new MailRuTest() {}.getClass().getEnclosingMethod().getName() +
+                FAILED_TEST_NAME + new MailRuTest() {}.getClass().getEnclosingMethod().getName() +
                         ". True - sent mail is verified in Sent folder, false is otherwise");
     }
 }
