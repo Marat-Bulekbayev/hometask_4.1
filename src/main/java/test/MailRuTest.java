@@ -23,7 +23,6 @@ public class MailRuTest extends MailRuBaseTest {
     public void testLoginToMailbox() {
         mailRuMailboxPage = new MailRuMainPage(driver).openPage().loginToMailbox(USER_MAILBOX_LOGIN, USER_MAILBOX_PASSWORD);
         boolean isUserLoggedIn = mailRuMailboxPage.isUserLoggedInMailbox();
-
         Assert.assertTrue(isUserLoggedIn, generateErrorMessage(new MailRuTest(){}.getClass().getEnclosingMethod().getName()));
     }
 
@@ -32,7 +31,7 @@ public class MailRuTest extends MailRuBaseTest {
         boolean isMailPresent = mailRuMailboxPage
                 .writeNewDraftMail(ADDRESSEE, MAIL_THEME, MAIL_BODY)
                 .openMailboxFolder(MailboxFolder.DRAFT)
-                .isMailPresentInMailboxFolder();
+                .isMailPresentInMailboxFolder(MailboxFolder.DRAFT);
 
         Assert.assertTrue(isMailPresent, generateErrorMessage(new MailRuTest(){}.getClass().getEnclosingMethod().getName()));
     }
@@ -46,14 +45,14 @@ public class MailRuTest extends MailRuBaseTest {
 
     @Test(dependsOnMethods = {"testDraftMailContent"})
     public void testSentMailAbsenceInDraftFolder() {
-        boolean isMailAbsent = mailRuMailboxPage.sendDraftMail().isMailPresentInMailboxFolder();
+        boolean isMailAbsent = mailRuMailboxPage.sendDraftMail().isMailAbsentInMailboxFolder();
 
         Assert.assertFalse(isMailAbsent, generateErrorMessage(new MailRuTest(){}.getClass().getEnclosingMethod().getName()));
     }
 
     @Test(dependsOnMethods = {"testSentMailAbsenceInDraftFolder"})
     public void testSentMailPresenceInSentFolder() {
-        boolean isMailPresent = mailRuMailboxPage.openMailboxFolder(MailboxFolder.SENT).isMailContentVerified(ADDRESSEE, MAIL_THEME, MAIL_BODY);
+        boolean isMailPresent = mailRuMailboxPage.openMailboxFolder(MailboxFolder.SENT).isMailPresentInMailboxFolder(MailboxFolder.SENT);
 
         Assert.assertTrue(isMailPresent, generateErrorMessage(new MailRuTest(){}.getClass().getEnclosingMethod().getName()));
 

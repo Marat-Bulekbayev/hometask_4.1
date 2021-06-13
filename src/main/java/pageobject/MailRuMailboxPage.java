@@ -1,6 +1,7 @@
 package pageobject;
 
 import enums.MailboxFolder;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -12,6 +13,8 @@ import static util.Waiter.*;
 public class MailRuMailboxPage extends AbstractPage{
 
     private static final String PAGE_URL = "https://e.mail.ru/inbox";
+    private static final String DRAFT_FOLDER_URL = "https://e.mail.ru/drafts/";
+    private static final String SENT_FOLDER_URL = "https://e.mail.ru/sent/";
 
     @FindBy(xpath = "//a[@title='Написать письмо']")
     WebElement writeNewMail;
@@ -54,6 +57,8 @@ public class MailRuMailboxPage extends AbstractPage{
 
     @FindBy(xpath = "//div[text()='Выйти']")
     WebElement logOut;
+
+    private final By noUnfinishedOrUnsentMailsMessageLocator = By.xpath("//span[@class='octopus__title']");
 
     public MailRuMailboxPage(WebDriver driver) {
         super(driver);
@@ -112,12 +117,21 @@ public class MailRuMailboxPage extends AbstractPage{
                mailsContent.get(2).getText().contains(mailText);
     }
 
-    public boolean isMailPresentInMailboxFolder() {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public boolean isMailPresentInMailboxFolder(MailboxFolder folder) {
+        switch (folder) {
+            case DRAFT :
+                waitForRightURL(driver, DRAFT_FOLDER_URL);
+                return !mailsContent.isEmpty();
+            case SENT :
+                waitForRightURL(driver, SENT_FOLDER_URL);
+                return !mailsContent.isEmpty();
+            default :
+                return false;
         }
+    }
+
+    public boolean isMailAbsentInMailboxFolder() {
+        waitForElementToBeVisible(driver, noUnfinishedOrUnsentMailsMessageLocator);
         return !mailsContent.isEmpty();
     }
 }
