@@ -25,7 +25,7 @@ public class MailRuMailboxPage extends AbstractPage{
     @FindBy(xpath = "//input[@name='Subject']")
     WebElement mailSubject;
 
-    @FindBy(xpath = "//div[@dir='true']/div")
+    @FindBy(xpath = "//div[@dir='true']/div[1]")
     WebElement mailBody;
 
     @FindBy(xpath = "//span[text()='Сохранить']")
@@ -52,7 +52,7 @@ public class MailRuMailboxPage extends AbstractPage{
     @FindBy(xpath = "//div[@class='llc__content']/div/span")
     List<WebElement> mailsContent;
 
-    @FindBy(xpath = "//div[@aria-label='auto.test94@mail.ru']")
+    @FindBy(xpath = "//div[@data-testid='whiteline-account']")
     WebElement userManager;
 
     @FindBy(xpath = "//div[text()='Выйти']")

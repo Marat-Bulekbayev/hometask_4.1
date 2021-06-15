@@ -6,9 +6,6 @@ import org.testng.annotations.Test;
 import pageobject.MailRuMailboxPage;
 import pageobject.MailRuMainPage;
 
-import static util.ErrorMessageGenerator.generateErrorMessage;
-
-
 public class MailRuTest extends MailRuBaseTest {
 
     private static final String USER_MAILBOX_LOGIN = "auto.test94";
@@ -23,7 +20,7 @@ public class MailRuTest extends MailRuBaseTest {
     public void testLoginToMailbox() {
         mailRuMailboxPage = new MailRuMainPage(driver).openPage().loginToMailbox(USER_MAILBOX_LOGIN, USER_MAILBOX_PASSWORD);
         boolean isUserLoggedIn = mailRuMailboxPage.isUserLoggedInMailbox();
-        Assert.assertTrue(isUserLoggedIn, generateErrorMessage(new MailRuTest(){}.getClass().getEnclosingMethod().getName()));
+        Assert.assertTrue(isUserLoggedIn, "User should be logged in mailbox");
     }
 
     @Test(dependsOnMethods = {"testLoginToMailbox"})
@@ -33,29 +30,29 @@ public class MailRuTest extends MailRuBaseTest {
                 .openMailboxFolder(MailboxFolder.DRAFT)
                 .isMailPresentInMailboxFolder(MailboxFolder.DRAFT);
 
-        Assert.assertTrue(isMailPresent, generateErrorMessage(new MailRuTest(){}.getClass().getEnclosingMethod().getName()));
+        Assert.assertTrue(isMailPresent, "New saved mail must be in drafts folder");
     }
 
     @Test(dependsOnMethods = {"testNewMailPresenceInDrafts"})
     public void testDraftMailContent() {
         boolean isMailContentVerified = mailRuMailboxPage.isMailContentVerified(ADDRESSEE, MAIL_THEME, MAIL_BODY);
 
-        Assert.assertTrue(isMailContentVerified, generateErrorMessage(new MailRuTest(){}.getClass().getEnclosingMethod().getName()));
+        Assert.assertTrue(isMailContentVerified, "Draft mail content must match entered data (addressee, mail subject and text)");
     }
 
     @Test(dependsOnMethods = {"testDraftMailContent"})
     public void testSentMailAbsenceInDraftFolder() {
         boolean isMailAbsent = mailRuMailboxPage.sendDraftMail().isMailAbsentInMailboxFolder();
 
-        Assert.assertFalse(isMailAbsent, generateErrorMessage(new MailRuTest(){}.getClass().getEnclosingMethod().getName()));
+        Assert.assertFalse(isMailAbsent, "Sent mail must disappear from draft folder");
     }
 
     @Test(dependsOnMethods = {"testSentMailAbsenceInDraftFolder"})
     public void testSentMailPresenceInSentFolder() {
         boolean isMailPresent = mailRuMailboxPage.openMailboxFolder(MailboxFolder.SENT).isMailPresentInMailboxFolder(MailboxFolder.SENT);
 
-        Assert.assertTrue(isMailPresent, generateErrorMessage(new MailRuTest(){}.getClass().getEnclosingMethod().getName()));
-
         mailRuMailboxPage.logOutFromMailbox();
+
+        Assert.assertTrue(isMailPresent, "Sent mail must be present in sent folder");
     }
 }
