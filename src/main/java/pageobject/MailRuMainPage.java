@@ -5,12 +5,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import static util.Waiter.*;
-
-public class MailRuMainPage {
+public class MailRuMainPage extends AbstractPage {
 
     private static final String PAGE_URL = "https://mail.ru/";
-    private WebDriver driver;
 
     @FindBy(xpath = "//input[@name='login']")
     WebElement userMailboxLogin;
@@ -25,22 +22,20 @@ public class MailRuMainPage {
     WebElement enterButton;
 
     public MailRuMainPage(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
+        super(driver);
+        PageFactory.initElements(this.driver, this);
     }
 
+    @Override
     public MailRuMainPage openPage() {
-        driver.get(PAGE_URL);
+        driver.navigate().to(PAGE_URL);
         return this;
     }
 
     public MailRuMailboxPage loginToMailbox(String userLogin, String userPassword) {
         userMailboxLogin.sendKeys(userLogin);
-        waitForElementToBeClickable(driver, enterPasswordButton);
         enterPasswordButton.click();
-        waitForElementToBeClickable(driver, userMailboxPassword);
         userMailboxPassword.sendKeys(userPassword);
-        waitForElementToBeClickable(driver, enterButton);
         enterButton.click();
         return new MailRuMailboxPage(driver);
     }

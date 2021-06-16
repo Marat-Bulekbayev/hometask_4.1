@@ -1,6 +1,7 @@
 package pageobject;
 
-import enums.MailboxFolderEnum;
+import enums.MailboxFolder;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -9,12 +10,11 @@ import java.util.List;
 
 import static util.Waiter.*;
 
-public class MailRuMailboxPage {
+public class MailRuMailboxPage extends AbstractPage{
 
+    private static final String PAGE_URL = "https://e.mail.ru/inbox";
     private static final String DRAFT_FOLDER_URL = "https://e.mail.ru/drafts/";
     private static final String SENT_FOLDER_URL = "https://e.mail.ru/sent/";
-
-    private WebDriver driver;
 
     @FindBy(xpath = "//a[@title='Написать письмо']")
     WebElement writeNewMail;
@@ -25,7 +25,7 @@ public class MailRuMailboxPage {
     @FindBy(xpath = "//input[@name='Subject']")
     WebElement mailSubject;
 
-    @FindBy(xpath = "//div[@dir='true']/div")
+    @FindBy(xpath = "//div[@dir='true']/div[1]")
     WebElement mailBody;
 
     @FindBy(xpath = "//span[text()='Сохранить']")
@@ -40,106 +40,98 @@ public class MailRuMailboxPage {
     @FindBy(xpath = "//span[@title='Закрыть']")
     WebElement closeSentMailNotificationPopup;
 
+    @FindBy(xpath = "//div[text()='Входящие']")
+    WebElement mailInboxFolder;
+
     @FindBy(xpath = "//div[text()='Черновики']")
-    WebElement mailDrafts;
+    WebElement mailDraftsFolder;
 
     @FindBy(xpath = "//div[text()='Отправленные']")
-    WebElement sentMails;
+    WebElement mailSentFolder;
 
     @FindBy(xpath = "//div[@class='llc__content']/div/span")
     List<WebElement> mailsContent;
 
-    @FindBy(xpath = "//div[@aria-label='auto.test94@mail.ru']")
+    @FindBy(xpath = "//div[@data-testid='whiteline-account']")
     WebElement userManager;
 
     @FindBy(xpath = "//div[text()='Выйти']")
     WebElement logOut;
 
+    private final By noUnfinishedOrUnsentMailsMessageLocator = By.xpath("//span[@class='octopus__title']");
+
     public MailRuMailboxPage(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
+        super(driver);
+        PageFactory.initElements(this.driver, this);
+    }
+
+    @Override
+    public MailRuMailboxPage openPage() {
+        driver.navigate().to(PAGE_URL);
+        return this;
     }
 
     public boolean isUserLoggedInMailbox() {
-        waitForElementToBeClickable(driver, writeNewMail);
         return writeNewMail.isDisplayed();
     }
 
     public void logOutFromMailbox() {
-        waitForElementToBeClickable(driver, userManager);
         userManager.click();
-        waitForElementToBeClickable(driver, logOut);
         logOut.click();
     }
 
-    public MailRuMailboxPage writeNewMail(String addressee, String mailTheme, String mailText) {
-        waitForElementToBeClickable(driver, writeNewMail);
+    public MailRuMailboxPage writeNewDraftMail(String addressee, String mailTheme, String mailText) {
         writeNewMail.click();
-        waitForElementToBeClickable(driver, mailTo);
         mailTo.sendKeys(addressee);
-        waitForElementToBeClickable(driver, mailSubject);
         mailSubject.sendKeys(mailTheme);
-        waitForElementToBeClickable(driver, mailBody);
         mailBody.sendKeys(mailText);
-        waitForElementToBeClickable(driver, saveMailToDraftButton);
         saveMailToDraftButton.click();
-        return this;
-    }
-
-    public MailRuMailboxPage openMailboxDraftsFolder() {
-        waitForElementToBeClickable(driver, closeNewMailPopUp);
         closeNewMailPopUp.click();
-        waitForElementToBeClickable(driver, mailDrafts);
-        mailDrafts.click();
         return this;
     }
 
-    public MailRuMailboxPage openMailboxSentFolder() {
-        waitForElementToBeClickable(driver, sentMails);
-        sentMails.click();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public MailRuMailboxPage openMailboxFolder(MailboxFolder folder) {
+        switch (folder) {
+            case DRAFT:
+                mailDraftsFolder.click();
+                return this;
+            case SENT:
+                mailSentFolder.click();
+                return this;
+            default:
+                mailInboxFolder.click();
+                return this;
         }
-        return this;
     }
 
-    public MailRuMailboxPage sendMail() {
-        waitForRightURL(driver, DRAFT_FOLDER_URL);
+    public MailRuMailboxPage sendDraftMail() {
         mailsContent.get(0).click();
-        waitForElementToBeClickable(driver, sendMailButton);
         sendMailButton.click();
-        waitForElementToBeClickable(driver, closeSentMailNotificationPopup);
         closeSentMailNotificationPopup.click();
         return this;
     }
 
-    public boolean isMailVerifiedInMailboxFolder(MailboxFolderEnum mailboxFolder, String mailAddressee, String mailSubject, String mailText) {
-        switch (mailboxFolder) {
-            case DRAFT:
+    public boolean isMailContentVerified(String mailAddressee, String mailSubject, String mailText) {
+        return mailsContent.get(0).getText().contains(mailAddressee) &&
+               mailsContent.get(1).getText().contains(mailSubject) &&
+               mailsContent.get(2).getText().contains(mailText);
+    }
+
+    public boolean isMailPresentInMailboxFolder(MailboxFolder folder) {
+        switch (folder) {
+            case DRAFT :
                 waitForRightURL(driver, DRAFT_FOLDER_URL);
-                return (mailsContent.get(0).getText().contains(mailAddressee) && mailsContent.get(1).getText().contains(mailSubject) && mailsContent.get(2).getText().contains(mailText));
-            case SENT:
+                return !mailsContent.isEmpty();
+            case SENT :
                 waitForRightURL(driver, SENT_FOLDER_URL);
-                return (mailsContent.get(0).getText().contains(mailAddressee) && mailsContent.get(1).getText().contains(mailSubject) && mailsContent.get(2).getText().contains(mailText));
+                return !mailsContent.isEmpty();
             default :
                 return false;
         }
     }
 
-    public boolean isMailPresentInMailboxFolder(MailboxFolderEnum mailboxFolder) {
-        switch (mailboxFolder) {
-            case DRAFT :
-                waitForRightURL(driver, DRAFT_FOLDER_URL);
-                waitForTimeInterval(1000);
-                return !mailsContent.isEmpty();
-            case SENT :
-                waitForRightURL(driver, SENT_FOLDER_URL);
-                waitForTimeInterval(1000);
-                return !mailsContent.isEmpty();
-            default :
-                return false;
-        }
+    public boolean isMailAbsentInMailboxFolder() {
+        waitForElementToBeVisible(driver, noUnfinishedOrUnsentMailsMessageLocator);
+        return !mailsContent.isEmpty();
     }
 }
