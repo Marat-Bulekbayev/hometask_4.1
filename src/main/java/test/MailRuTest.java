@@ -2,6 +2,7 @@ package test;
 
 import enums.MailboxFolder;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import pageobject.MailRuMailboxPage;
 import pageobject.MailRuMainPage;
@@ -51,8 +52,11 @@ public class MailRuTest extends MailRuBaseTest {
     public void testSentMailPresenceInSentFolder() {
         boolean isMailPresent = mailRuMailboxPage.openMailboxFolder(MailboxFolder.SENT).isMailPresentInMailboxFolder(MailboxFolder.SENT);
 
-        mailRuMailboxPage.logOutFromMailbox();
-
         Assert.assertTrue(isMailPresent, "Sent mail must be present in sent folder");
+    }
+
+    @AfterClass
+    public void logout() {
+        mailRuMailboxPage.logOutFromMailbox();
     }
 }
