@@ -16,7 +16,7 @@ public abstract class AbstractPage {
         this.driver = driver;
     }
 
-    public void dragAndDropElement(WebElement element, WebElement target) {
+    protected void dragAndDropElement(WebElement element, WebElement target) {
         new Actions(driver).dragAndDrop(element, target).build().perform();
     }
 
@@ -27,11 +27,11 @@ public abstract class AbstractPage {
         new Actions(driver).click(target).build().perform();
     }
 
-    public void highlightElement(WebElement element) {
+    protected void highlightElement(WebElement element) {
         ((JavascriptExecutor) driver).executeScript("arguments[0].style.border='3px solid green'", element);
     }
 
-    public void unHighlightElement(WebElement element) {
+    protected void unHighlightElement(WebElement element) {
         ((JavascriptExecutor) driver).executeScript("arguments[0].style.border='0px'", element);
     }
 }

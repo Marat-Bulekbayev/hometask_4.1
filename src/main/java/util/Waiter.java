@@ -3,6 +3,7 @@ package util;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
@@ -23,6 +24,15 @@ public class Waiter {
                 .ignoring(NoSuchElementException.class);
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+    }
+
+    public static void waitForElementToBeClickable(WebDriver driver, WebElement element) {
+        Wait wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(MAX_TIME_OUT))
+                .pollingEvery(Duration.ofSeconds(MIN_POLLING_TIME))
+                .ignoring(NoSuchElementException.class);
+
+        wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
     public static void waitForRightURL(WebDriver driver, String url) {
