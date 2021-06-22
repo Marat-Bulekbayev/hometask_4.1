@@ -1,25 +1,25 @@
 package test;
 
+import businessobject.Email;
+import businessobject.User;
 import enums.MailboxFolder;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import pageobject.MailRuMailboxPage;
 import pageobject.MailRuMainPage;
+import util.EmailGenerator;
+import util.UserCreator;
 
 public class MailRuTest extends MailRuBaseTest {
 
-    private static final String USER_MAILBOX_LOGIN = "auto.test94";
-    private static final String USER_MAILBOX_PASSWORD = "I(TRc8Rr3vyi";
-    private static final String ADDRESSEE = "mapat_91@mail.ru";
-    private static final String MAIL_THEME = "This e-mail is sent to you by Selenium Auto-Test";
-    private static final String MAIL_BODY = "Hello, World!";
-
+    private static final User MAIL_RU_TEST_USER = UserCreator.createUser();
+    private static final Email TEST_EMAIL = EmailGenerator.generateEmail();
     private MailRuMailboxPage mailRuMailboxPage;
 
     @Test
     public void testLoginToMailbox() {
-        mailRuMailboxPage = new MailRuMainPage(driver).openPage().loginToMailbox(USER_MAILBOX_LOGIN, USER_MAILBOX_PASSWORD);
+        mailRuMailboxPage = new MailRuMainPage(driver).openPage().loginToMailbox(MAIL_RU_TEST_USER);
         boolean isUserLoggedIn = mailRuMailboxPage.isUserLoggedInMailbox();
         Assert.assertTrue(isUserLoggedIn, "User should be logged in mailbox");
     }
@@ -27,7 +27,7 @@ public class MailRuTest extends MailRuBaseTest {
     @Test(dependsOnMethods = {"testLoginToMailbox"})
     public void testNewMailPresenceInDrafts() {
         boolean isMailPresent = mailRuMailboxPage
-                .writeNewDraftMail(ADDRESSEE, MAIL_THEME, MAIL_BODY)
+                .writeNewDraftMail(TEST_EMAIL)
                 .openMailboxFolder(MailboxFolder.DRAFT)
                 .isMailPresentInMailboxFolder(MailboxFolder.DRAFT);
 
@@ -36,7 +36,7 @@ public class MailRuTest extends MailRuBaseTest {
 
     @Test(dependsOnMethods = {"testNewMailPresenceInDrafts"})
     public void testDraftMailContent() {
-        boolean isMailContentVerified = mailRuMailboxPage.isMailContentVerified(ADDRESSEE, MAIL_THEME, MAIL_BODY);
+        boolean isMailContentVerified = mailRuMailboxPage.isMailContentVerified(TEST_EMAIL);
 
         Assert.assertTrue(isMailContentVerified, "Draft mail content must match entered data (addressee, mail subject and text)");
     }

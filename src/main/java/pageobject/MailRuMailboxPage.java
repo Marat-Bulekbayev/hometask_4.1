@@ -1,5 +1,6 @@
 package pageobject;
 
+import businessobject.Email;
 import enums.MailboxFolder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -80,11 +81,11 @@ public class MailRuMailboxPage extends AbstractPage{
         logOut.click();
     }
 
-    public MailRuMailboxPage writeNewDraftMail(String addressee, String mailTheme, String mailText) {
+    public MailRuMailboxPage writeNewDraftMail(Email email) {
         writeNewMail.click();
-        mailTo.sendKeys(addressee);
-        mailSubject.sendKeys(mailTheme);
-        mailBody.sendKeys(mailText);
+        mailTo.sendKeys(email.getAddressee());
+        mailSubject.sendKeys(email.getEmailSubject());
+        mailBody.sendKeys(email.getEmailText());
         saveMailToDraftButton.click();
         closeNewMailPopUp.click();
         return this;
@@ -111,10 +112,10 @@ public class MailRuMailboxPage extends AbstractPage{
         return this;
     }
 
-    public boolean isMailContentVerified(String mailAddressee, String mailSubject, String mailText) {
-        return mailsContent.get(0).getText().contains(mailAddressee) &&
-               mailsContent.get(1).getText().contains(mailSubject) &&
-               mailsContent.get(2).getText().contains(mailText);
+    public boolean isMailContentVerified(Email email) {
+        return mailsContent.get(0).getText().contains(email.getAddressee()) &&
+               mailsContent.get(1).getText().contains(email.getEmailSubject()) &&
+               mailsContent.get(2).getText().contains(email.getEmailText());
     }
 
     public boolean isMailPresentInMailboxFolder(MailboxFolder folder) {

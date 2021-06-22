@@ -1,5 +1,6 @@
 package pageobject;
 
+import businessobject.User;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -32,10 +33,10 @@ public class MailRuMainPage extends AbstractPage {
         return this;
     }
 
-    public MailRuMailboxPage loginToMailbox(String userLogin, String userPassword) {
-        userMailboxLogin.sendKeys(userLogin);
+    public MailRuMailboxPage loginToMailbox(User user) {
+        userMailboxLogin.sendKeys(user.getName());
         enterPasswordButton.click();
-        userMailboxPassword.sendKeys(userPassword);
+        userMailboxPassword.sendKeys(user.getPassword());
         enterButton.click();
         return new MailRuMailboxPage(driver);
     }
