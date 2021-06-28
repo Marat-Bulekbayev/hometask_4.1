@@ -38,8 +38,8 @@ public class MailRuInboxPage extends AbstractPage{
 
     public MailRuInboxPage writeNewDraftMail(Email email) {
         writeNewMail(mailTo, mailSubject, mailBody, email);
-        saveMailToDraftButton.click();
-        closeNewMailPopUp.click();
+        click(saveMailToDraftButton);
+        click(closeNewMailPopUp);
         return this;
     }
 }

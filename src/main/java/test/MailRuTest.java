@@ -4,6 +4,7 @@ import businessobject.Email;
 import businessobject.User;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 import pageobject.MailRuInboxPage;
 import pageobject.MailRuMainPage;

@@ -29,9 +29,9 @@ public class MailRuDraftsPage extends AbstractPage {
     }
 
     public MailRuDraftsPage sendDraftMail() {
-        mailsContent.get(0).click();
-        sendMailButton.click();
-        closeSentMailNotificationPopup.click();
+        click(mailsContent.get(0));
+        click(sendMailButton);
+        click(closeSentMailNotificationPopup);
         return this;
     }
 

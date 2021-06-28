@@ -1,6 +1,7 @@
 package pageobject;
 
 import businessobject.Email;
+import logger.MyLogger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -47,10 +48,10 @@ public abstract class AbstractPage {
     }
 
     protected void writeNewMail(WebElement mailTo, WebElement mailSubject, WebElement mailBody, Email email) {
-        writeNewMail.click();
-        mailTo.sendKeys(email.getAddressee());
-        mailSubject.sendKeys(email.getEmailSubject());
-        mailBody.sendKeys(email.getEmailText());
+        click(writeNewMail);
+        sendKeys(mailTo, email.getAddressee());
+        sendKeys(mailSubject, email.getEmailSubject());
+        sendKeys(mailBody, email.getEmailText());
     }
 
     public MailRuDraftsPage openDrafts() {
@@ -64,8 +65,21 @@ public abstract class AbstractPage {
     }
 
     public void logOutFromMailbox() {
-        userManager.click();
-        logOut.click();
+        click(userManager);
+        click(logOut);
+        MyLogger.info("User is logged out from mailbox");
+    }
+
+    public void sendKeys(WebElement element, String text) {
+        MyLogger.debug("Highlighting web-element" + element.toString().split("->")[1] + " and entering text: " + text);
+        highlightElement(element);
+        element.sendKeys(text);
+    }
+
+    public void click(WebElement element) {
+        MyLogger.debug("Highlighting web-element" + element.toString().split("->")[1] + " and clicking on it");
+        highlightElement(element);
+        element.click();
     }
 
     public boolean isUserLoggedInMailbox() {
@@ -83,7 +97,7 @@ public abstract class AbstractPage {
         return !mailsContent.isEmpty();
     }
 
-    protected void dragAndDropElement(WebElement element, WebElement target) {
+    public void dragAndDropElement(WebElement element, WebElement target) {
         new Actions(driver).dragAndDrop(element, target).build().perform();
     }
 

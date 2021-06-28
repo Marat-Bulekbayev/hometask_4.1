@@ -1,6 +1,7 @@
 package pageobject;
 
 import businessobject.User;
+import logger.MyLogger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -40,15 +41,17 @@ public class MailRuMainPage extends AbstractPage {
 
     @Override
     public MailRuMainPage openPage() {
+        MyLogger.info("Browser opened Mail.Ru main page");
         driver.navigate().to(PAGE_URL);
         return this;
     }
 
     public MailRuInboxPage loginToMailbox(User user) {
-        userMailboxLogin.sendKeys(user.getName());
-        enterPasswordButton.click();
-        userMailboxPassword.sendKeys(user.getPassword());
-        enterButton.click();
+        sendKeys(userMailboxLogin, user.getName());
+        click(enterPasswordButton);
+        sendKeys(userMailboxPassword, user.getPassword());
+        click(enterButton);
+        MyLogger.info("User is logged in mailbox");
         return new MailRuInboxPage(driver);
     }
 

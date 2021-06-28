@@ -1,5 +1,6 @@
 package util;
 
+import logger.MyLogger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -22,8 +23,11 @@ public class Waiter {
                 .withTimeout(Duration.ofSeconds(MAX_TIME_OUT))
                 .pollingEvery(Duration.ofSeconds(MIN_POLLING_TIME))
                 .ignoring(NoSuchElementException.class);
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+        } catch (Exception e) {
+            MyLogger.error(e.getMessage());
+        }
     }
 
     public static void waitForElementToBeClickable(WebDriver driver, WebElement element) {
@@ -32,7 +36,11 @@ public class Waiter {
                 .pollingEvery(Duration.ofSeconds(MIN_POLLING_TIME))
                 .ignoring(NoSuchElementException.class);
 
-        wait.until(ExpectedConditions.elementToBeClickable(element));
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(element));
+        } catch (Exception e) {
+            MyLogger.error(e.getMessage());
+        }
     }
 
     public static void waitForRightURL(WebDriver driver, String url) {
